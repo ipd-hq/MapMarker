@@ -1,11 +1,14 @@
 package id.ipd.mapapp
 
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import id.ipd.mapipd.MAPIPDActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: MAPIPDActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
     }
+
 }
