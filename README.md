@@ -1,7 +1,7 @@
-# MapIPD
+# MapMarker
 ![image](https://raw.githubusercontent.com/ipd-hq/MapIPD/master/image-demo.jpeg)
 
-MapIPD is an Android library to show markers and current location point on Google Maps. 
+MapMarker is an Android library to show markers and current location point on Google Maps. 
 
 ## Installation
 
@@ -18,7 +18,7 @@ dependencyResolutionManagement {
 then, add the dependecy in your build.gradle file (Module)
 ```bash
 dependencies {
-     implementation 'com.github.ipd-hq:MapIPD:Tag'
+     implementation 'com.github.ipd-hq:MapMarker:Tag'
 }
 ```
 replace Tag with the latest version.
