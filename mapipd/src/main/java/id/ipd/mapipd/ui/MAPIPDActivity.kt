@@ -101,7 +101,6 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mGoogleMap = googleMap
-        mGoogleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
         mGoogleMap.uiSettings.isZoomControlsEnabled = true
         mGoogleMap.setPadding(10, 10, 10, 10)
 
