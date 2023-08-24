@@ -35,7 +35,7 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
     private val REQUEST_CODE = 3300
 
     private lateinit var listLocation: List<ItemLoc>
-    private lateinit var markerIcon : Bitmap
+    private var markerIcon : Bitmap? = null
     private lateinit var userIcon : Bitmap
 
     private val binding by lazy { ActivityMapIpdBinding.inflate(layoutInflater) }
@@ -74,11 +74,11 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
 
     fun initData(
         listLocation: List<ItemLoc>,
-        markerIcon : Bitmap = (getDrawable(R.drawable.ic_marker) as BitmapDrawable).bitmap,
+        markerIcon : Bitmap? = null,
         userIcon : Bitmap = (getDrawable(R.drawable.ic_user) as BitmapDrawable).bitmap
     ) {
         this.listLocation = listLocation
-        this.markerIcon = convertBitmapSize(markerIcon)
+        this.markerIcon = if(markerIcon != null) convertBitmapSize(markerIcon) else null
         this.userIcon = convertBitmapSize(userIcon)
 
         initView()
@@ -110,7 +110,7 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
             var marker = MarkerOptions()
                     .position(it.position)
                     .title(it.title)
-            if(markerIcon != null) marker.icon(BitmapDescriptorFactory.fromBitmap(markerIcon))
+            if(markerIcon != null) marker.icon(BitmapDescriptorFactory.fromBitmap(markerIcon!!))
             mGoogleMap.addMarker(marker)
         }
 
