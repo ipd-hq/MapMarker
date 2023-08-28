@@ -1,6 +1,8 @@
 package id.ipd.mapipd.ui
 
 import android.Manifest.permission
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -8,6 +10,8 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.view.View
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +23,8 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -30,17 +36,26 @@ import id.ipd.mapipd.databinding.ActivityMapIpdBinding
 import id.ipd.mapipd.model.ItemLoc
 
 
-open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
+open class MAPIPDActivity : AppCompatActivity(),
+    OnMapReadyCallback,
+    OnMarkerClickListener,
+    OnMapClickListener
+{
 
     private val REQUEST_CODE = 3300
 
     private lateinit var listLocation: List<ItemLoc>
+    private var data : HashMap<Marker, ItemLoc> = hashMapOf()
     private var markerIcon : Bitmap? = null
     private lateinit var userIcon : Bitmap
 
     private val binding by lazy { ActivityMapIpdBinding.inflate(layoutInflater) }
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private lateinit var mapFragment : SupportMapFragment
+    private var mMarker: Marker? = null
+    private var mPopupWindow: PopupWindow? = null
+    private var mWidth = 0
+    private var mHeight = 0
 
     private var mLastLocation: Location? = null
     private var mCurrLocationMarker: Marker? = null
@@ -106,11 +121,13 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         listLocation.forEach{
-            var marker = MarkerOptions()
+            var markerOption = MarkerOptions()
                     .position(it.position)
                     .title(it.title)
-            if(markerIcon != null) marker.icon(BitmapDescriptorFactory.fromBitmap(markerIcon!!))
-            mGoogleMap.addMarker(marker)
+
+            if(markerIcon != null) markerOption.icon(BitmapDescriptorFactory.fromBitmap(markerIcon!!))
+            var marker = mGoogleMap.addMarker(markerOption)
+            data.put(marker!!, it)
         }
 
         mLocationRequest = LocationRequest()
@@ -133,6 +150,9 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
             mFusedLocationClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
             mGoogleMap.isMyLocationEnabled = true
         }
+
+        mGoogleMap.setOnMarkerClickListener(this)
+        mGoogleMap.setOnMapClickListener(this)
     }
 
     private fun checkLocationPermission() {
@@ -197,6 +217,48 @@ open class MAPIPDActivity : AppCompatActivity(), OnMapReadyCallback {
                 return
             }
         }
+    }
+
+    override fun onMarkerClick(p0: Marker): Boolean {
+        showDialog(p0)
+        return true
+//
+    }
+
+    override fun onMapClick(p0: LatLng) {
+        hideDialog()
+    }
+
+    fun showDialog(marker : Marker){
+
+        val datum = data.get(marker)
+        if(datum!= null){
+            binding.titleTv.text = datum?.title
+            binding.descriptionTv.text = datum?.desription
+
+            binding.dialogCv.setVisibility(View.VISIBLE);
+            binding.dialogCv.setAlpha(0.0f);
+            binding.dialogCv.translationY = binding.dialogCv.height.toFloat()
+
+            binding.dialogCv.animate()
+                .translationY(0.0f)
+                .alpha(1.0f)
+                .setListener(null);
+        }
+
+    }
+
+    fun hideDialog(){
+        binding.dialogCv.animate()
+            .translationY(binding.dialogCv.getHeight().toFloat())
+            .alpha(0.0f)
+            .setDuration(300)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    binding.dialogCv.setVisibility(View.GONE)
+                }
+            })
     }
 
 }
