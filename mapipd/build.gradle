@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        minSdk 24
+        minSdk 23
         targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -48,5 +48,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     //location
-    implementation "com.google.android.gms:play-services-location:15.0.1"
+    implementation "com.google.android.gms:play-services-location:21.0.1"
 }
