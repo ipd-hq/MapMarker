@@ -233,9 +233,22 @@ open class MAPIPDActivity : AppCompatActivity(),
     fun showDialog(marker : Marker){
 
         val datum = data.get(marker)
-        if(datum!= null){
-            binding.titleTv.text = datum?.title
-            binding.descriptionTv.text = datum?.desription
+        datum?.let{
+
+            datum?.title?.let {
+                binding.titleTv.visibility = View.VISIBLE
+                binding.titleTv.text = datum?.title
+            }?:run{
+                binding.titleTv.visibility = View.GONE
+            }
+
+            datum?.desription?.let{
+                binding.descriptionTv.visibility = View.VISIBLE
+                binding.descriptionTv.text = datum?.desription
+            }?:run{
+                binding.descriptionTv.visibility = View.GONE
+            }
+
             binding.directionB.setOnClickListener {
                 try{
                     val uri = Uri.parse("google.navigation:q=${datum.position.latitude},${datum.position.longitude}")
