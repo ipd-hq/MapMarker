@@ -3,10 +3,12 @@ package id.ipd.mapipd.ui
 import android.Manifest.permission
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
@@ -234,8 +236,18 @@ open class MAPIPDActivity : AppCompatActivity(),
         if(datum!= null){
             binding.titleTv.text = datum?.title
             binding.descriptionTv.text = datum?.desription
+            binding.directionB.setOnClickListener {
+                try{
+                    val uri = Uri.parse("google.navigation:q=${datum.position.latitude},${datum.position.longitude}")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, uri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    startActivity(mapIntent)
+                } catch (exexption: java.lang.Exception){
+                    Toast.makeText(this, "Aplikasi Google Maps belum terpasang. Harap install aplikasi terlebih dahulu", Toast.LENGTH_LONG).show()
+                }
+            }
 
-            binding.dialogCv.setVisibility(View.VISIBLE);
+            binding.dialogCv.setVisibility(View.VISIBLE)
             binding.dialogCv.setAlpha(0.0f);
             binding.dialogCv.translationY = binding.dialogCv.height.toFloat()
 
