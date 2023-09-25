@@ -51,6 +51,8 @@ open class MAPIPDActivity : AppCompatActivity(),
     private var data : HashMap<Marker, ItemLoc> = hashMapOf()
     private var markerIcon : Bitmap? = null
     private lateinit var userIcon : Bitmap
+    private var textButton : String? = null
+    private var listenerButton : ((String)->Unit)? = null
 
     private val binding by lazy { ActivityMapIpdBinding.inflate(layoutInflater) }
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -93,11 +95,15 @@ open class MAPIPDActivity : AppCompatActivity(),
     fun initData(
         listLocation: List<ItemLoc>,
         markerIcon : Bitmap? = null,
-        userIcon : Bitmap = (getDrawable(R.drawable.ic_user) as BitmapDrawable).bitmap
+        userIcon : Bitmap = (getDrawable(R.drawable.ic_user) as BitmapDrawable).bitmap,
+        textButton : String? = null,
+        listenerButton : ((String)->Unit)? = null
     ) {
         this.listLocation = listLocation
         this.markerIcon = if(markerIcon != null) convertBitmapSize(markerIcon) else null
         this.userIcon = convertBitmapSize(userIcon)
+        this.textButton = textButton
+        this.listenerButton = listenerButton
 
         initView()
     }
@@ -257,6 +263,17 @@ open class MAPIPDActivity : AppCompatActivity(),
                     startActivity(mapIntent)
                 } catch (exexption: java.lang.Exception){
                     Toast.makeText(this, "Aplikasi Google Maps belum terpasang. Harap install aplikasi terlebih dahulu", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            if(
+                textButton != null  &&
+                listenerButton != null
+            ){
+                binding.actionB.visibility = View.VISIBLE
+                binding.actionB.text = textButton
+                binding.actionB.setOnClickListener {
+                    listenerButton?.invoke(datum.id)
                 }
             }
 
