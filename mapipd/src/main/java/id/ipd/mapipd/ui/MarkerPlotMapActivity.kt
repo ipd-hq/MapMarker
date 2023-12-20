@@ -34,12 +34,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolygonOptions
 import id.ipd.mapipd.R
 import id.ipd.mapipd.databinding.ActivityMapIpdBinding
 import id.ipd.mapipd.model.ItemLoc
+import id.ipd.mapipd.util.MarkerHelper
 
 
-open class MAPIPDActivity : AppCompatActivity(),
+open class MarkerPlotMapActivity : AppCompatActivity(),
     OnMapReadyCallback,
     OnMarkerClickListener,
     OnMapClickListener
@@ -53,6 +55,7 @@ open class MAPIPDActivity : AppCompatActivity(),
     private lateinit var userIcon : Bitmap
     private var textButton : String? = null
     private var listenerButton : ((String)->Unit)? = null
+    private var isSubSegmen: Boolean? = false
 
     private val binding by lazy { ActivityMapIpdBinding.inflate(layoutInflater) }
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -108,6 +111,25 @@ open class MAPIPDActivity : AppCompatActivity(),
         initView()
     }
 
+    fun initDataSegmen(
+        listLocation: List<ItemLoc>,
+        markerIcon : Bitmap? = null,
+        userIcon : Bitmap = (getDrawable(R.drawable.ic_user) as BitmapDrawable).bitmap,
+        textButton : String? = null,
+        listenerButton : ((String)->Unit)? = null,
+    ) {
+        this.listLocation = listLocation
+        this.markerIcon = if(markerIcon != null) convertBitmapSize(markerIcon) else null
+        this.userIcon = convertBitmapSize(userIcon)
+        this.textButton = textButton
+        this.listenerButton = listenerButton
+        this.isSubSegmen = true
+
+        initView()
+    }
+
+
+
     private fun initView(){
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -115,6 +137,8 @@ open class MAPIPDActivity : AppCompatActivity(),
         mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
     }
 
     fun convertBitmapSize(bitmap : Bitmap) : Bitmap{
@@ -160,6 +184,18 @@ open class MAPIPDActivity : AppCompatActivity(),
 
         mGoogleMap.setOnMarkerClickListener(this)
         mGoogleMap.setOnMapClickListener(this)
+
+        /*
+        For Survey Ubinan purposes that require square-shaped images of sub-segments.
+         */
+        if (isSubSegmen == true) {
+            val polygon: MutableList<LatLng> =
+                MarkerHelper.getRectangleCorner(LatLng(listLocation[0].position.latitude, listLocation[0].position.longitude), 70.710678.toDouble())
+            val polygonOptions: PolygonOptions = PolygonOptions().addAll(polygon)
+            mGoogleMap.addPolygon(polygonOptions)
+        }
+
+
     }
 
     private fun checkLocationPermission() {

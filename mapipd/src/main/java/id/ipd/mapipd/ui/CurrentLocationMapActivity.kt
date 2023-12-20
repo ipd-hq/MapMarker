@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import id.ipd.mapipd.databinding.ActivityMapIpdCurrentLocationBinding
 
-open class MapIpdCurrentLocationActivity : AppCompatActivity(), OnMapReadyCallback {
+open class CurrentLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val REQUEST_CODE = 3300
 
     private val binding by lazy { ActivityMapIpdCurrentLocationBinding.inflate(layoutInflater) }
