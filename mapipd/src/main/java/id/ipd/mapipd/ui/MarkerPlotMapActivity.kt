@@ -49,7 +49,7 @@ open class MarkerPlotMapActivity : AppCompatActivity(),
 
     private val REQUEST_CODE = 3300
 
-    private lateinit var listLocation: List<ItemLoc>
+    private var listLocation: List<ItemLoc>? = null
     private var data : HashMap<Marker, ItemLoc> = hashMapOf()
     private var markerIcon : Bitmap? = null
     private lateinit var userIcon : Bitmap
@@ -96,7 +96,7 @@ open class MarkerPlotMapActivity : AppCompatActivity(),
     }
 
     fun initData(
-        listLocation: List<ItemLoc>,
+        listLocation: List<ItemLoc>?,
         markerIcon : Bitmap? = null,
         userIcon : Bitmap = (getDrawable(R.drawable.ic_user) as BitmapDrawable).bitmap,
         textButton : String? = null,
@@ -110,7 +110,9 @@ open class MarkerPlotMapActivity : AppCompatActivity(),
 
         initView()
     }
-
+    /*
+       For Survey Ubinan purposes that require square-shaped images of sub-segments.
+     */
     fun initDataSegmen(
         listLocation: List<ItemLoc>,
         markerIcon : Bitmap? = null,
@@ -153,7 +155,7 @@ open class MarkerPlotMapActivity : AppCompatActivity(),
         mGoogleMap.setPadding(10, 10, 10, 10)
 
 
-        listLocation.forEach{
+        listLocation?.forEach{
             var markerOption = MarkerOptions()
                     .position(it.position)
                     .title(it.title)
@@ -189,10 +191,13 @@ open class MarkerPlotMapActivity : AppCompatActivity(),
         For Survey Ubinan purposes that require square-shaped images of sub-segments.
          */
         if (isSubSegmen == true) {
-            val polygon: MutableList<LatLng> =
-                MarkerHelper.getRectangleCorner(LatLng(listLocation[0].position.latitude, listLocation[0].position.longitude), 70.710678.toDouble())
-            val polygonOptions: PolygonOptions = PolygonOptions().addAll(polygon)
-            mGoogleMap.addPolygon(polygonOptions)
+            if (listLocation?.size!! > 0) {
+                val polygon: MutableList<LatLng> =
+                    MarkerHelper.getRectangleCorner(LatLng(listLocation!![0].position.latitude, listLocation!![0].position.longitude), 70.710678.toDouble())
+                val polygonOptions: PolygonOptions = PolygonOptions().addAll(polygon)
+                mGoogleMap.addPolygon(polygonOptions)
+            }
+
         }
 
 
